@@ -1,6 +1,8 @@
 <Solution>
   <Project Path="IntuneCompanion/IntuneCompanion.csproj" />
   <Folder Name="/Solution Items/">
+    <File Path="grsdetection.txt" />
+    <File Path="grsremediation.txt" />
     <File Path="README.md" />
   </Folder>
 </Solution>
