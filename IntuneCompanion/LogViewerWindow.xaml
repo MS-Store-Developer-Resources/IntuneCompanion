@@ -1,0 +1,100 @@
+<Window x:Class="IntuneCompanion.LogViewerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:IntuneCompanion.ViewModels"
+        Title="Log Viewer" Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:LogViewerViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="100" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="120" MinHeight="60" MaxHeight="300" />
+        </Grid.RowDefinitions>
+
+		<!-- File selector and search -->
+		<Grid Grid.Row="0" Margin="0,0,0,8">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			
+			<StackPanel Grid.Column="0" Orientation="Horizontal">
+				<ComboBox x:Name="FileComboBox" ItemsSource="{Binding LogFiles}" SelectedItem="{Binding SelectedFile}" MinWidth="250" VerticalAlignment="Center" />
+				<Button Content="↻" Margin="4,0,0,0" VerticalAlignment="Center" Click="Refresh_Click" ToolTip="Refresh" />
+			</StackPanel>
+			
+			<StackPanel Grid.Column="2" Orientation="Horizontal">
+				<TextBox x:Name="SearchTextBox" Width="200" Margin="0,0,4,0" VerticalAlignment="Center" />
+				<Button Content="▲" Margin="0,0,2,0" VerticalAlignment="Center" Click="SearchUp_Click" ToolTip="Find Previous" />
+				<Button Content="▼" VerticalAlignment="Center" Click="SearchDown_Click" ToolTip="Find Next" />
+			</StackPanel>
+		</Grid>
+
+        <!-- Log grid -->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding LogLines}" AutoGenerateColumns="False"
+                  IsReadOnly="True" FontFamily="Consolas" FontSize="11"
+                  HeadersVisibility="Column" GridLinesVisibility="None"
+                  CanUserSortColumns="False" x:Name="LogDataGrid"
+                  SelectionChanged="LogDataGrid_SelectionChanged"
+                  SelectionUnit="FullRow"
+                  RowHeaderWidth="0"
+                  SelectionMode="Single">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy" Click="CopyRow_Click" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                </Style>
+            </DataGrid.CellStyle>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Height" Value="20" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding LogType}" Value="2">
+                            <Setter Property="Foreground" Value="#B8860B" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding LogType}" Value="3">
+                            <Setter Property="Foreground" Value="#C42B1C" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding DateText}" Width="160" />
+                <DataGridTextColumn Header="Message" Binding="{Binding MessageSingleLine}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Loading overlay -->
+        <TextBlock Grid.Row="1" Text="Loading..." FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}" />
+
+        <!-- Grid splitter -->
+        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                      Background="Transparent" Cursor="SizeNS" />
+
+        <!-- Detail textbox -->
+        <TextBox Grid.Row="3" x:Name="DetailTextBox" IsReadOnly="True" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                 Margin="0,4,0,0" />
+    </Grid>
+</Window>

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="IntuneCompanion/IntuneCompanion.csproj" />
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+</Solution>
